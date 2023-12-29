@@ -1,15 +1,32 @@
-import Image from "next/image";
-import useSWR from "swr";
+"use client";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data, error } = useSWR("/api/2/3", fetcher);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("/api/20/18");
+        setData(res.data);
+        setIsLoading(false);
+      } catch (err: unknown) {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       This is the home page
-      {data && <div>{data}</div>}
+      {data && <p>{JSON.stringify(data)}</p>} {/* Display data */}
     </main>
   );
 }
